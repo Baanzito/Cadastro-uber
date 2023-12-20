@@ -1,6 +1,6 @@
 <?php
 
-    $texto = $_POST['visitante'] . '#' . $_POST['cpf'] . '#' . $_POST['modelo'] . '#' . $_POST['placa'] . '#' . $_POST['cor'] . PHP_EOL;
+    $texto = $_POST['morador'] . '#' . $_POST['unidade'] . '#' . $_POST['motorista'] . '#' . $_POST['modelo'] . '#' . $_POST['placa'] . '#' . $_POST['cor'] . PHP_EOL;
 
     $arquivo = fopen('arquivo.cd', 'a');
 
@@ -9,4 +9,5 @@
     fclose($arquivo);
 
     header('Location: index.html');
+
 ?>
