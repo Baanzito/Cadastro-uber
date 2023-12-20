@@ -24,7 +24,7 @@ fclose($arquivo);
           crossorigin="anonymous">
     <style>
         .container {
-            margin-top: 20px; /* Adicione um margin-top ao container para criar espaço entre a navbar e o conteúdo */
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -60,22 +60,24 @@ fclose($arquivo);
             <div class="col-md-12">
                 <div class="card bg-light">
                     <div class="card-header">
-                        Veiculos Cadastrados
+                        Veiculo Cadastrado
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <h5 class="card-title">Morador: <?= $veiculo_dados[0] ?></h5>
                                 <h6 class="card-subtitle mb-2 text-muted">Unidade: <?= $veiculo_dados[1] ?></h6>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <p class="card-text">Motorista: <?= $veiculo_dados[2] ?></p>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <p class="card-text">Modelo: <?= $veiculo_dados[3] ?></p>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <p class="card-text">Placa: <?= $veiculo_dados[4] ?></p>
+                            </div>
+                            <div class="col-md-2">
                                 <p class="card-text">Cor: <?= $veiculo_dados[5] ?></p>
                             </div>
                         </div>

@@ -62,7 +62,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Placa</label>
-                                    <input name="placa" type="text" class="form-control">
+                                    <input name="placa" id="placa" type="text" class="form-control" maxlength="8">
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -86,20 +86,22 @@
 </div>
 
 <script>
+  // Máscara de placa
+  document.getElementById('placa').addEventListener('input', function (e) {
+      let value = e.target.value;
+      value = value.replace(/[^a-zA-Z0-9]/g, ''); // Remove caracteres não alfanuméricos
 
-    // Máscara de placa
-    document.getElementsByName('placa').addEventListener('input', function (e) {
-        let value = e.target.value;
-        value = value.replace(/[^a-zA-Z0-9]/g, ''); // Remove caracteres não alfanuméricos
-        if (value.length > 3) {
-            value = value.slice(0, 3) + '-' + value.slice(3, 8);
-        }
-        if (value.length > 8) {
-            value = value.slice(0, 8);
-        }
-        e.target.value = value.toUpperCase();
-    });
+      if (value.length > 3) {
+          value = value.slice(0, 3) + '-' + value.slice(3);
+      }
 
+      if (value.length > 8) {
+          value = value.slice(0, 8);
+      }
+
+      e.target.value = value.toUpperCase();
+  });
 </script>
+
 </body>
 </html>
