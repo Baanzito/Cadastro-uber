@@ -1,57 +1,28 @@
 <?php
 
-function getDataAtualFormatada() {
-    return date("dmY");
+date_default_timezone_set('America/Sao_Paulo');
+$agora = time();
+$dataAtual = date('dmY', $agora);
+$horaAtual = date('H:i:s', $agora);
+
+if ($horaAtual === '23:59:59') {
+    $nomeArquivo = 'arquivos/arquivo_' . date('dmY', strtotime('+1 day')) . '.cd';
+} else {
+    $nomeArquivo = 'arquivos/arquivo_' . $dataAtual . '.cd';
 }
 
-function getNomeArquivo() {
-    return 'arquivo_' . getDataAtualFormatada() . '.cd';
+$texto = $_POST['morador'] . '#' . $_POST['unidade'] . '#' . $_POST['motorista'] . '#' . $_POST['modelo'] . '#' . $_POST['placa'] . '#' . $_POST['cor'] . '#' . $dataAtual . '#' . $horaAtual . PHP_EOL;
+
+if (!file_exists('arquivos')) {
+    mkdir('arquivos');
 }
 
-function arquivoDoDiaAtualExiste() {
-    return file_exists(getNomeArquivo());
-}
+$arquivo = fopen($nomeArquivo, 'a');
 
-function moverArquivoParaPastaArquivos() {
-    $nomeArquivo = getNomeArquivo();
-    $pastaArquivos = 'Arquivos';
+fwrite($arquivo, $texto);
 
-    if (!file_exists($pastaArquivos)) {
-        mkdir($pastaArquivos);
-    }
+fclose($arquivo);
 
-    rename($nomeArquivo, $pastaArquivos . '/' . $nomeArquivo);
-}
+header('Location: index.html');
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-    $morador = $_POST['morador'];
-    $unidade = $_POST['unidade'];
-    $motorista = $_POST['motorista'];
-    $modelo = $_POST['modelo'];
-    $placa = $_POST['placa'];
-    $cor = $_POST['cor'];
-
-    $data = date("dmY");
-    $hora = date("H:i:s");
-
-    if (!arquivoDoDiaAtualExiste()) {
-        $arquivo = fopen(getNomeArquivo(), 'a');
-        fclose($arquivo);
-    }
-
-    $texto = "$morador#$unidade#$motorista#$modelo#$placa#$cor#$data#$hora" . PHP_EOL;
-
-    $arquivo = fopen(getNomeArquivo(), 'a');
-
-    fwrite($arquivo, $texto);
-
-    fclose($arquivo);
-
-    if (date("H:i:s") >= "00:00:00") {
-        moverArquivoParaPastaArquivos();
-    }
-    
-    header('Location: index.html');
-}
 ?>

@@ -12,34 +12,55 @@ function obterArquivoDoDia() {
     }
 }
 
-function lerArquivoDoDia() {
+function lerArquivoDoDiaComFiltro($filtroMorador, $filtroUnidade, $filtroDataArquivo) {
     $arquivoDoDia = obterArquivoDoDia();
+
+    $arquivoDoDia = obterArquivoPelaData($filtroDataArquivo);
 
     if ($arquivoDoDia !== false) {
         $linhas = file($arquivoDoDia, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        return $linhas;
+        $motoristasFiltrados = array();
+
+        foreach ($linhas as $motorista) {
+            $motorista_dados = explode('#', $motorista);
+
+            // Aplica o filtro
+            if (
+                count($motorista_dados) >= 7 &&
+                (empty($filtroMorador) || stripos($motorista_dados[0], $filtroMorador) !== false) &&
+                (empty($filtroUnidade) || stripos($motorista_dados[1], $filtroUnidade) !== false)
+            ) {
+                $motoristasFiltrados[] = $motorista;
+            }
+        }
+
+        return $motoristasFiltrados;
     } else {
         return false;
     }
 }
 
-$veiculos = array();
+function obterArquivoPelaData($filtroDataArquivo) {
+    $pastaArquivos = 'arquivos';
+    $nomeArquivo = 'arquivo_' . $filtroDataArquivo . '.cd';
+    $caminhoCompleto = $pastaArquivos . '/' . $nomeArquivo;
 
-$arquivoDoDia = obterArquivoDoDia();
-
-if ($arquivoDoDia !== false) {
-    $linhas = lerArquivoDoDia();
-
-    if ($linhas !== false) {
-        // Adicionando as linhas do arquivo do dia ao array $veiculos
-        $veiculos = array_merge($veiculos, $linhas);
+    if (file_exists($caminhoCompleto)) {
+        return $caminhoCompleto;
     } else {
-        echo "Erro ao ler o arquivo do dia.\n";
+        return false;
     }
-} else {
-    echo "Arquivo do dia não encontrado.\n";
 }
 
+$filtroMorador = isset($_GET['filtroMorador']) ? $_GET['filtroMorador'] : '';
+$filtroUnidade = isset($_GET['filtroUnidade']) ? $_GET['filtroUnidade'] : '';
+$filtroDataArquivo = isset($_GET['filtroDataArquivo']) ? $_GET['filtroDataArquivo'] : '';
+
+if (empty($filtroDataArquivo)) {
+    $filtroDataArquivo = date('dmY');
+}
+
+$motoristas = lerArquivoDoDiaComFiltro($filtroMorador, $filtroUnidade, $filtroDataArquivo);
 ?>
 
 <html>
@@ -65,7 +86,6 @@ if ($arquivoDoDia !== false) {
             margin-right: 20px;
             margin-left: 20px;
         }
-
     </style>
 </head>
 
@@ -78,57 +98,61 @@ if ($arquivoDoDia !== false) {
 </nav>
 
 <div class="container">
-    <div class="row card-consultar-veiculo">
 
-        <?php foreach ($veiculos as $veiculo) { ?>
-
+    <form class="form-inline" method="GET">
+        <div class="form-group mx-sm-3 mb-2">
+            <label for="filtroMorador" class="sr-only">Morador</label>
+            <input type="text" class="form-control" id="filtroMorador" name="filtroMorador" placeholder="Morador">
+        </div>
+        <div class="form-group mx-sm-3 mb-2">
+            <label for="filtroUnidade" class="sr-only">Unidade</label>
+            <input type="text" class="form-control" id="filtroUnidade" name="filtroUnidade" placeholder="Unidade">
+        </div>
+        <div class="form-group mx-sm-3 mb-2">
+            <label for="filtroDataArquivo" class="sr-only">Data (ddmmyyyy)</label>
+            <input type="text" class="form-control" id="filtroDataArquivo" name="filtroDataArquivo" placeholder="Data do Arquivo (ddmmyyyy)">
+        </div>
+        <button type="submit" class="btn btn-primary mb-2">Filtrar</button>
+    </form>
+    
+    <ul class="list-group">
+        <?php foreach ($motoristas as $motorista) { ?>
             <?php
-
-            $veiculo_dados = explode('#', $veiculo);
-
-            if (count($veiculo_dados) < 7) {
+            $motorista_dados = explode('#', $motorista);
+            if (count($motorista_dados) < 7) {
                 continue;
             }
 
-            // Adicionando barras à data e concatenando as horas
-            $dataFormatada = substr($veiculo_dados[6], 0, 2) . '/' . substr($veiculo_dados[6], 2, 2) . '/' . substr($veiculo_dados[6], 4);
-            $dataHoraFormatada = $dataFormatada . ' às ' . $veiculo_dados[7];
-
+            $dataFormatada = substr($motorista_dados[6], 0, 2) . '/' . substr($motorista_dados[6], 2, 2) . '/' . substr($motorista_dados[6], 4);
+            $dataHoraFormatada = $dataFormatada . ' às ' . $motorista_dados[7];
             ?>
 
-            <div class="col-md-12">
-                <div class="card bg-light">
-                    <div class="card-header">
-                        Veiculo Cadastrado
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-md-2">
+                        <h6>Morador: <?= $motorista_dados[0] ?></h6>
+                        <p class="mb-1">Unidade: <?= $motorista_dados[1] ?></p>
                     </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-2">
-                                <h6 class="card-title">Morador: <?= $veiculo_dados[0] ?></h6>
-                                <h6 class="card-subtitle mb-2 text-muted">Unidade: <?= $veiculo_dados[1] ?></h6>
-                            </div>
-                            <div class="card-text">
-                                <p>Motorista: <?= $veiculo_dados[2] ?></p>
-                            </div>
-                            <div>
-                                <p>Modelo: <?= $veiculo_dados[3] ?></p>
-                            </div>
-                            <div class="card-text">
-                                <p>Placa: <?= $veiculo_dados[4] ?></p>
-                            </div>
-                            <div>
-                                <p>Cor: <?= $veiculo_dados[5] ?></p>
-                            </div>
-                            <div class="card-text">
-                                <p>Data do Registro: <?= $dataHoraFormatada ?></p>
-                            </div>
-                        </div>
+                    <div class="col-md-2">
+                        <p>Motorista: <?= $motorista_dados[2] ?></p>
+                    </div>
+                    <div class="col-md-2">
+                        <p>Modelo: <?= $motorista_dados[3] ?></p>
+                    </div>
+                    <div class="col-md-2">
+                        <p>Placa: <?= $motorista_dados[4] ?></p>
+                    </div>
+                    <div class="col-md-2">
+                        <p>Cor: <?= $motorista_dados[5] ?></p>
+                    </div>
+                    <div class="col-md-2">
+                        <p>Data do Registro: <?= $dataHoraFormatada ?></p>
                     </div>
                 </div>
-            </div>
+            </li>
         <?php } ?>
-
-    </div>
+    </ul>
 </div>
+
 </body>
 </html>
