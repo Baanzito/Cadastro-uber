@@ -1,8 +1,8 @@
 <?php
 
-function obterArquivoDoDia() {
+function obterArquivoDoDia($filtroDataArquivo) {
     $pastaArquivos = 'Arquivos';
-    $nomeArquivo = 'arquivo_' . date("d_m_Y") . '.cd';
+    $nomeArquivo = 'arquivo_' . str_replace('/', '_', $filtroDataArquivo) . '.cd';
     $caminhoCompleto = $pastaArquivos . '/' . $nomeArquivo;
 
     if (file_exists($caminhoCompleto)) {
@@ -13,9 +13,7 @@ function obterArquivoDoDia() {
 }
 
 function lerArquivoDoDiaComFiltro($filtroMorador, $filtroUnidade, $filtroDataArquivo) {
-    $arquivoDoDia = obterArquivoDoDia();
-
-    $arquivoDoDia = obterArquivoPelaData($filtroDataArquivo);
+    $arquivoDoDia = obterArquivoDoDia($filtroDataArquivo);
 
     if ($arquivoDoDia !== false) {
         $linhas = file($arquivoDoDia, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -24,7 +22,6 @@ function lerArquivoDoDiaComFiltro($filtroMorador, $filtroUnidade, $filtroDataArq
         foreach ($linhas as $motorista) {
             $motorista_dados = explode('#', $motorista);
 
-            // Aplica o filtro
             if (
                 count($motorista_dados) >= 7 &&
                 (empty($filtroMorador) || stripos($motorista_dados[0], $filtroMorador) !== false) &&
@@ -40,24 +37,14 @@ function lerArquivoDoDiaComFiltro($filtroMorador, $filtroUnidade, $filtroDataArq
     }
 }
 
-function obterArquivoPelaData($filtroDataArquivo) {
-    $pastaArquivos = 'arquivos';
-    $nomeArquivo = 'arquivo_' . $filtroDataArquivo . '.cd';
-    $caminhoCompleto = $pastaArquivos . '/' . $nomeArquivo;
-
-    if (file_exists($caminhoCompleto)) {
-        return $caminhoCompleto;
-    } else {
-        return false;
-    }
-}
-
 $filtroMorador = isset($_GET['filtroMorador']) ? $_GET['filtroMorador'] : '';
 $filtroUnidade = isset($_GET['filtroUnidade']) ? $_GET['filtroUnidade'] : '';
 $filtroDataArquivo = isset($_GET['filtroDataArquivo']) ? $_GET['filtroDataArquivo'] : '';
 
-if (empty($filtroDataArquivo)) {
-    $filtroDataArquivo = date('d_m_Y');
+$filtroDataArquivoUnderscores = str_replace('/', '_', $filtroDataArquivo);
+
+if (empty($filtroDataArquivoUnderscores)) {
+    $filtroDataArquivoUnderscores = date('d_m_Y');
 }
 
 $motoristas = lerArquivoDoDiaComFiltro($filtroMorador, $filtroUnidade, $filtroDataArquivo);
@@ -109,8 +96,9 @@ $motoristas = lerArquivoDoDiaComFiltro($filtroMorador, $filtroUnidade, $filtroDa
             <input type="text" class="form-control" id="filtroUnidade" name="filtroUnidade" placeholder="Unidade">
         </div>
         <div class="form-group mx-sm-3 mb-2">
-            <label for="filtroDataArquivo" class="sr-only">Data (ddmmyyyy)</label>
-            <input type="text" class="form-control" id="filtroDataArquivo" name="filtroDataArquivo" placeholder="Data do Arquivo (ddmmyyyy)">
+            <label for="filtroDataArquivo" class="sr-only">Data (dd/mm/yyyy)</label>
+            <input type="text" class="form-control" id="filtroDataArquivo" name="filtroDataArquivo" placeholder="Data (DD/MM/YYYY)"
+                oninput="formatarData(this)">
         </div>
         <button type="submit" class="btn btn-primary mb-2">Filtrar</button>
     </form>
@@ -155,6 +143,39 @@ $motoristas = lerArquivoDoDiaComFiltro($filtroMorador, $filtroUnidade, $filtroDa
         <?php } ?>
     </ul>
 </div>
+
+<div id="customAlert" class="custom-alert" onclick="hideAlert()"></div>
+
+<script>
+  function registrar() {
+    // Coletar dados do formulário
+    var formData = new FormData(document.getElementById('registroForm'));
+
+    // Enviar dados via AJAX
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'registra_motorista.php', true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            // Exibir o alerta
+            const customAlert = document.getElementById('customAlert');
+            customAlert.innerText = 'Cadastro realizado com sucesso!';
+            customAlert.style.display = 'block';
+
+            // Limpar os campos do formulário
+            document.getElementById('registroForm').reset();
+        } else {
+            console.error('Erro ao processar a requisição.');
+        }
+    };
+    xhr.send(formData);
+  }
+
+  // Função para ocultar o alerta
+  function hideAlert() {
+    const customAlert = document.getElementById('customAlert');
+    customAlert.style.display = 'none';
+  }
+</script>
 
 </body>
 </html>
