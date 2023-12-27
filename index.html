@@ -30,7 +30,7 @@
                     Informações
                 </div>
                 <div class="card-body">
-                    <form method="post" action="registra_veiculo.php">
+                    <form method="post" action="registra_motorista.php">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -86,10 +86,10 @@
 </div>
 
 <script>
-  // Máscara de placa
+
   document.getElementById('placa').addEventListener('input', function (e) {
       let value = e.target.value;
-      value = value.replace(/[^a-zA-Z0-9]/g, ''); // Remove caracteres não alfanuméricos
+      value = value.replace(/[^a-zA-Z0-9]/g, '');
 
       if (value.length > 3) {
           value = value.slice(0, 3) + '-' + value.slice(3);
