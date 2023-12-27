@@ -14,6 +14,7 @@ function obterArquivoDoDia($filtroDataArquivo) {
 
 function lerArquivoDoDiaComFiltro($filtroMorador, $filtroUnidade, $filtroDataArquivo) {
     $arquivoDoDia = obterArquivoDoDia($filtroDataArquivo);
+    $arquivoDoDia = obterArquivoDoDia(str_replace('_', '/', $filtroDataArquivo));
 
     if ($arquivoDoDia !== false) {
         $linhas = file($arquivoDoDia, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -83,7 +84,7 @@ $motoristas = lerArquivoDoDiaComFiltro($filtroMorador, $filtroUnidade, $filtroDa
         Cadastro Uber
     </a>
 </nav>
-
+$
 <div class="container">
 
     <form class="form-inline" method="GET">
@@ -97,8 +98,7 @@ $motoristas = lerArquivoDoDiaComFiltro($filtroMorador, $filtroUnidade, $filtroDa
         </div>
         <div class="form-group mx-sm-3 mb-2">
             <label for="filtroDataArquivo" class="sr-only">Data (dd/mm/yyyy)</label>
-            <input type="text" class="form-control" id="filtroDataArquivo" name="filtroDataArquivo" placeholder="Data (DD/MM/YYYY)"
-                oninput="formatarData(this)">
+            <input type="text" class="form-control" id="filtroDataArquivo" name="filtroDataArquivo" placeholder="Data (DD/MM/YYYY)" oninput="formatarData(this)" onkeydown="tratarBackspace(event)">
         </div>
         <button type="submit" class="btn btn-primary mb-2">Filtrar</button>
     </form>
@@ -112,7 +112,6 @@ $motoristas = lerArquivoDoDiaComFiltro($filtroMorador, $filtroUnidade, $filtroDa
             }
 
             $dataSemUnderline = str_replace('_', '', $motorista_dados[6]);
-
             $dataFormatada = date("d/m/Y", strtotime(DateTime::createFromFormat('dmY', $dataSemUnderline)->format('Y-m-d')));
             $dataHoraFormatada = $dataFormatada . ' às ' . $motorista_dados[7];
             ?>
@@ -144,37 +143,48 @@ $motoristas = lerArquivoDoDiaComFiltro($filtroMorador, $filtroUnidade, $filtroDa
     </ul>
 </div>
 
-<div id="customAlert" class="custom-alert" onclick="hideAlert()"></div>
 
 <script>
-  function registrar() {
-    // Coletar dados do formulário
-    var formData = new FormData(document.getElementById('registroForm'));
+    function formatarData(input) {
+        // Remove caracteres não numéricos
+        var valorAtual = input.value.replace(/\D/g, '');
 
-    // Enviar dados via AJAX
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'registra_motorista.php', true);
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            // Exibir o alerta
-            const customAlert = document.getElementById('customAlert');
-            customAlert.innerText = 'Cadastro realizado com sucesso!';
-            customAlert.style.display = 'block';
+        // Verifica se o valor é não vazio
+        if (valorAtual !== "") {
+            // Formata a data
+            var dia = valorAtual.substring(0, 2);
+            var mes = valorAtual.substring(2, 4);
+            var ano = valorAtual.substring(4, 8);
 
-            // Limpar os campos do formulário
-            document.getElementById('registroForm').reset();
-        } else {
-            console.error('Erro ao processar a requisição.');
+            // Adiciona as barras conforme a posição dos caracteres
+            var dataFormatada = "";
+            if (dia.length > 0) {
+                dataFormatada += dia;
+                if (dia.length >= 2) {
+                    dataFormatada += '/';
+                }
+            }
+            if (mes.length > 0) {
+                dataFormatada += mes;
+                if (mes.length >= 2) {
+                    dataFormatada += '/';
+                }
+            }
+            dataFormatada += ano;
+
+            // Atualiza o valor do campo
+            input.value = dataFormatada;
         }
-    };
-    xhr.send(formData);
-  }
+    }
 
-  // Função para ocultar o alerta
-  function hideAlert() {
-    const customAlert = document.getElementById('customAlert');
-    customAlert.style.display = 'none';
-  }
+    function tratarBackspace(event) {
+        // Verifica se a tecla pressionada é o "Backspace"
+        if (event.keyCode === 8) {
+            // Remove o último caractere
+            var campo = document.getElementById('filtroDataArquivo');
+            campo.value = campo.value.slice(0, -1);
+        }
+    }
 </script>
 
 </body>
