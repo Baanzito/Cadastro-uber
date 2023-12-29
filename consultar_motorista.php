@@ -37,13 +37,13 @@ $filtroMorador = isset($_GET['filtroMorador']) ? $_GET['filtroMorador'] : '';
 $filtroUnidade = isset($_GET['filtroUnidade']) ? $_GET['filtroUnidade'] : '';
 $filtroDataArquivo = isset($_GET['filtroDataArquivo']) ? $_GET['filtroDataArquivo'] : '';
 
-$filtroDataArquivoUnderscores = str_replace('/', '_', $filtroDataArquivo);
-
-if (empty($filtroDataArquivoUnderscores)) {
+if (empty($filtroMorador) && empty($filtroUnidade) && empty($filtroDataArquivo)) {
     $filtroDataArquivoUnderscores = date('d_m_Y');
+} else {
+    $filtroDataArquivoUnderscores = isset($_GET['filtroDataArquivo']) ? $_GET['filtroDataArquivo'] : date('d_m_Y');
 }
 
-$motoristas = lerArquivoDoDiaComFiltro($filtroMorador, $filtroUnidade, $filtroDataArquivo);
+$motoristas = lerArquivoDoDiaComFiltro($filtroMorador, $filtroUnidade, $filtroDataArquivoUnderscores);
 ?>
 
 <html>
