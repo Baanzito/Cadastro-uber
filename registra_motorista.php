@@ -35,11 +35,11 @@ $camposObrigatorios = ['morador', 'unidade', 'motorista', 'placa'];
 
     fclose($arquivo);
 
-    header('Location: confirmacao.php?success=true');
+    header('Location: cadastrar.php?success=true');
     exit();
 } else {
 
-    header('Location: index.html?error=empty_fields');
+    header('Location: cadastrar.php?error=empty_fields');
     exit();
 }
 ?>

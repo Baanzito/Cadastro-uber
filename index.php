@@ -80,24 +80,40 @@ $motoristasPaginados = array_slice($motoristas, $indiceInicial, $itensPorPagina)
             margin-top: 20px;
             padding: 0px;
             display: flexbox;
-            padding: 10px 100px 10px 10px;
             max-height: 80vh;
             overflow-y: auto;
         }
 
         li {
             word-wrap: break-word;
-            margin-right: 20px;
-            margin-left: 20px;
+            margin: 10px;
         }
 
         .list-group-item {
-        font-size: 0.9em;
-        
+            font-size: 0.9em;
+            margin-right: 200px;
+            margin-bottom: 5px;
         }
 
+        .list-group{
+            margin-right: 10px;
+            padding-right: 10px;
+        }
+        
         .pagination li {
-        margin-right: -17px;
+            margin-right: -17px;
+            padding-right: 0px;
+        }
+
+        .data-registro{
+            padding-right: 0px;
+            margin-right: 0px;
+        }
+
+        .row{
+            margin-right: -110px;
+            padding-right: 0px;
+            margin-bottom: 5px;
         }
 
     </style>
@@ -140,7 +156,7 @@ $motoristasPaginados = array_slice($motoristas, $indiceInicial, $itensPorPagina)
                         <div class="col-md-2">Unidade</div>
                         <div class="col-md-2">Motorista</div>
                         <div class="col-md-2">Placa</div>
-                        <div class="col-md-3">Data do Registro</div>
+                        <div class="col-md-2">Data do Registro</div>
                     </div>
                 </li>';
 
@@ -164,19 +180,19 @@ $motoristasPaginados = array_slice($motoristas, $indiceInicial, $itensPorPagina)
                 echo '<li class="list-group-item">
                         <div class="row">
                             <div class="col-md-2">
-                                <p>' . $motorista_dados[0] . '</p>
+                                <p>'.$motorista_dados[0].'</p>
                             </div>
                             <div class="col-md-2">
-                                <p>' . $motorista_dados[1] . '</p>
+                                <p>'.$motorista_dados[1].'</p>
                             </div>
                             <div class="col-md-2">
-                                <p>' . $motorista_dados[2] . '</p>
+                                <p>'.$motorista_dados[2].'</p>
                             </div>
                             <div class="col-md-2">
-                                <p>' . $motorista_dados[3] . '</p>
+                                <p>'.$motorista_dados[3].'</p>
                             </div>
-                            <div class="col-md-3">
-                                <p>' . $dataHoraFormatada . '</p>
+                            <div class="col-md-2 data-registro">
+                                <p>'.$dataHoraFormatada.'</p>
                             </div>
                         </div>
                     </li>';

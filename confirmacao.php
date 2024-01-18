@@ -12,5 +12,5 @@
     <div class="alert alert-success" role="alert">
         <h4 class="alert-heading">Cadastro realizado com sucesso!</h4>
         <hr>
-        <p class="mb-0">Se deseja cadastrar outro motorista, volte à <a href="index.html">página inicial</a>.</p>
+        <p class="mb-0">Se deseja cadastrar outro motorista, volte à <a href="cadastrar.php">página inicial</a>.</p>
     </div
